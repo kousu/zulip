@@ -71,7 +71,27 @@ Vagrant.configure("2") do |config|
       d.build_args += ["--build-arg", "UBUNTU_MIRROR=#{ubuntu_mirror}"]
     end
     d.has_ssh = true
-    d.create_args = ["--ulimit", "nofile=1024:65536"]
+    d.create_args = ["--ulimit", "nofile=1024:65536",
+     # adjust the container => host user ID mapping so that
+     # instead of the default:
+     # - container root is host #{Process.uid}
+     # - container #{Process.uid} is 100000
+     # we have:
+     # - container root is host 100000
+     # - container #{Process.uid} is host #{Process.uid}
+     #
+     # This is double confusing because these parameters are
+     # relative to the mapping already imposed by /etc/subuid:
+     # 1000:0 means mapping container 1000 to subuid mapping 0 which is mapped to host 1000.
+     # TODO: compute these from Process.uid and reading /etc/subuid instead of assuming default values
+     "--uidmap", "0:100000:1000",
+     "--uidmap", "1000:0:1",
+     "--uidmap", "1001:101001:64535",
+     # ditto for groups
+     "--gidmap","0:100000:1000",
+     "--gidmap","1000:0:1",
+     "--gidmap", "1001:101001:64535"
+      ]
   end
 
   config.vm.provider "virtualbox" do |vb, override|
