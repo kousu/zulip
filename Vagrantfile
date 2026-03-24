@@ -84,13 +84,13 @@ Vagrant.configure("2") do |config|
      # relative to the mapping already imposed by /etc/subuid:
      # 1000:0 means mapping container 1000 to subuid mapping 0 which is mapped to host 1000.
      # TODO: compute these from Process.uid and reading /etc/subuid instead of assuming default values
-     "--uidmap", "0:100000:1000",
+     "--uidmap", "0:1:1000",
      "--uidmap", "1000:0:1",
-     "--uidmap", "1001:101001:64535",
+     "--uidmap", "1001:1001:64535",
      # ditto for groups
-     "--gidmap","0:100000:1000",
+     "--gidmap","0:1:1000",
      "--gidmap","1000:0:1",
-     "--gidmap", "1001:101001:64535"
+     "--gidmap", "1001:1001:64535"
       ]
   end
 
